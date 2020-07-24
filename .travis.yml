@@ -10,6 +10,7 @@ env:
   - TR_ARCH=local       COMPAT_TEST=y
   - TR_ARCH=local       CLANG=1 COMPAT_TEST=y
   - TR_ARCH=vagrant-fedora-no-vdso
+  - TR_ARCH=vagrant-fedora-non-root
 jobs:
   include:
     - os: linux
