@@ -1774,8 +1774,15 @@ static int create_children_and_session(void)
 static int restore_task_with_children(void *_arg)
 {
 	struct cr_clone_arg *ca = _arg;
+	struct proc_status_creds creds;
 	pid_t pid;
 	int ret;
+
+	/* We need the capabilities of this new process */
+	if (parse_pid_status(PROC_SELF, &creds.s, NULL))
+		goto err;
+
+	memcpy(&opts.cap_eff, &creds.cap_eff, sizeof(u32) * PROC_CAP_SIZE);
 
 	current = ca->item;
 
