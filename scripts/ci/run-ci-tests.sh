@@ -228,7 +228,8 @@ if [ "${STREAM_TEST}" = "1" ]; then
 fi
 
 # shellcheck disable=SC2086
-./test/zdtm.py run -a -p 2 --keep-going $ZDTM_OPTS
+./test/zdtm.py run -a -p 2 --keep-going $ZDTM_OPTS || dmesg
+exit 1
 
 LAZY_EXCLUDE="-x maps04 -x cmdlinenv00 -x maps007"
 
