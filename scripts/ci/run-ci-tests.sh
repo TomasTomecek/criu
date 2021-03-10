@@ -5,24 +5,8 @@ CI_PKGS="protobuf-c-compiler libprotobuf-c-dev libaio-dev libgnutls28-dev
 		libgnutls30 libprotobuf-dev protobuf-compiler libcap-dev
 		libnl-3-dev gdb bash libnet-dev util-linux asciidoctor
 		libnl-route-3-dev time ccache flake8 libbsd-dev
-		libperl-dev pkg-config"
-
-
-if [ -e /etc/lsb-release ]; then
-	# This file does not exist on non Ubuntu
-	# shellcheck disable=SC1091
-	. /etc/lsb-release
-	if [ "$DISTRIB_RELEASE" = "16.04" ]; then
-		# There is one last test running on 16.04 because of the broken
-		# overlayfs in 18.04. Once that is fixed we can remove the last
-		# 16.04 based test and this if clause.
-		CI_PKGS="$CI_PKGS python-future python-protobuf python-yaml
-			python-junit.xml python-ipaddress"
-	else
-		CI_PKGS="$CI_PKGS python3-future python3-protobuf python3-yaml
-			python3-junit.xml"
-	fi
-fi
+		libperl-dev pkg-config python3-future python3-protobuf
+		python3-yaml"
 
 X86_64_PKGS="gcc-multilib"
 
