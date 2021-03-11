@@ -18,6 +18,15 @@ jobs:
       - run:
           name: "Test local with CLANG"
           command: sudo -E make -C scripts/ci local CLANG=1
+  centos-8:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/criu
+    steps:
+      - checkout
+      - run:
+          name: "Run CentOS 8 based tests"
+          command: TERM=vt220 sudo -E make -C scripts/ci centos8
 
 workflows:
   version: 2
@@ -25,3 +34,4 @@ workflows:
     jobs:
       - test-local-gcc
       - test-local-clang
+      - centos-8
