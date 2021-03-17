@@ -29,9 +29,14 @@ setup() {
 	wget --no-check-certificate https://releases.hashicorp.com/vagrant/${VAGRANT_VERSION}/vagrant_${VAGRANT_VERSION}_"$(uname -m)".deb -O /tmp/vagrant.deb && \
 		dpkg -i /tmp/vagrant.deb
 
+	ip a
 	./apt-install libvirt-clients libvirt-daemon-system libvirt-dev qemu-utils qemu \
 		ruby build-essential libxml2-dev qemu-kvm rsync ebtables dnsmasq-base \
 		openssh-client
+	ip a
+	iptables -L
+	iptables -L -t nat
+	cat /proc/sys/net/ipv4/ip_forward
 	if [ -n "$CIRRUS_CI" ]; then
 		# On Cirrus systemctl does not work, because we are running in
 		# a container without access to systemd
@@ -40,7 +45,15 @@ setup() {
 	else
 		systemctl restart libvirtd
 	fi
+	ip a
+	iptables -L
+	iptables -L -t nat
+	cat /proc/sys/net/ipv4/ip_forward
 	vagrant plugin install vagrant-libvirt
+	ip a
+	iptables -L
+	iptables -L -t nat
+	cat /proc/sys/net/ipv4/ip_forward
 	vagrant init fedora/${FEDORA_VERSION}-cloud-base --box-version ${FEDORA_BOX_VERSION}
 	# The default libvirt Vagrant VM uses 512MB.
 	# Travis VMs should have around 7.5GB.
@@ -54,9 +67,24 @@ setup() {
 		rm -f /sbin/ip6tables
 		cp /bin/true /sbin/ip6tables
 	fi
+	ip a
+	cat /proc/sys/net/ipv4/ip_forward
 	vagrant up --provider=libvirt --no-tty
+	ip a
+	iptables -L
+	iptables -L -t nat
+	cat /proc/sys/net/ipv4/ip_forward
 	mkdir -p /root/.ssh
 	vagrant ssh-config >> /root/.ssh/config
+	ssh default sudo ip a
+	cat /proc/sys/net/ipv4/ip_forward
+	ssh default sudo ping -c 3 192.168.122.1
+	cat /proc/sys/net/ipv4/ip_forward
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	cat /proc/sys/net/ipv4/ip_forward
+	ssh default sudo ping -c 3 8.8.8.8
+	ssh default sudo ping -c 3 129.143.116.10
+	ssh default sudo ping -c 3 mirrors.fedoraproject.org
 	ssh default sudo dnf upgrade -y
 	ssh default sudo dnf install -y gcc git gnutls-devel nftables-devel libaio-devel \
 		libasan libcap-devel libnet-devel libnl3-devel make protobuf-c-devel \
